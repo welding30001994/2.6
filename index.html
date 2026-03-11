@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Gráficos - Operaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(94, 234, 212, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 0 30px rgba(45, 212, 191, 0.15);
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title-section h1 {
+            color: #2dd4bf;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        input, select {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(94, 234, 212, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: #e2e8f0;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #2dd4bf;
+            box-shadow: 0 0 8px rgba(45, 212, 191, 0.3);
+        }
+
+        .calculate-btn {
+            grid-column: 1 / -1;
+            background: linear-gradient(90deg, #2dd4bf, #0ea5e9);
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(45, 212, 191, 0.4);
+        }
+
+        .result-section {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(94, 234, 212, 0.2);
+            padding-top: 2rem;
+        }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #2dd4bf;
+            margin-bottom: 1rem;
+        }
+
+        .result-card h3 {
+            color: #2dd4bf;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            text-shadow: 0 0 8px rgba(226, 232, 240, 0.3);
+        }
+
+        .chart-placeholder {
+            margin-top: 2rem;
+            width: 100%;
+            height: 300px;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(94, 234, 212, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .futuristic-glow {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px rgba(45, 212, 191, 0.2);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(45, 212, 191, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-section">
+            <h1>Analizador de Operaciones - Puntos Máximo/Mínimo</h1>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="puntoMaximo">Punto Máximo</label>
+                <input type="number" id="puntoMaximo" step="any" placeholder="Ingresa el valor máximo">
+            </div>
+            <div class="input-group">
+                <label for="puntoMinimo">Punto Mínimo</label>
+                <input type="number" id="puntoMinimo" step="any" placeholder="Ingresa el valor mínimo">
+            </div>
+            <div class="input-group">
+                <label for="tipoOperacion">Tipo de Operación</label>
+                <select id="tipoOperacion">
+                    <option value="venta">Venta</option>
+                    <option value="compra">Compra</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="divisor">Divisor (ej: 2, 2.6)</label>
+                <input type="number" id="divisor" step="any" value="2.6" placeholder="Ingresa el divisor">
+            </div>
+            <button class="calculate-btn futuristic-glow" onclick="calcularOperacion()">CALCULAR RESULTADO</button>
+        </div>
+
+        <div class="result-section">
+            <div class="result-card" id="resultadoDiferencia" style="display: none;">
+                <h3>Diferencia (Max - Min)</h3>
+                <p class="result-value" id="valorDiferencia">-</p>
+            </div>
+            <div class="result-card" id="resultadoDividido" style="display: none;">
+                <h3>Resultado Dividido</h3>
+                <p class="result-value" id="valorDividido">-</p>
+            </div>
+            <div class="result-card" id="resultadoOperacion" style="display: none;">
+                <h3>Punto de Operación (Final)</h3>
+                <p class="result-value" id="valorOperacion">-</p>
+            </div>
+        </div>
+
+        <div class="chart-placeholder futuristic-glow">
+            <p>Visualización Gráfica (Espacio para integración con librerías como Chart.js)</p>
+            <p class="small">(Muestra puntos máximo, mínimo y punto de operación)</p>
+        </div>
+    </div>
+
+    <script>
+        function calcularOperacion() {
+            // Obtener valores de entrada
+            const puntoMax = parseFloat(document.getElementById('puntoMaximo').value);
+            const puntoMin = parseFloat(document.getElementById('puntoMinimo').value);
+            const tipoOp = document.getElementById('tipoOperacion').value;
+            const divisor = parseFloat(document.getElementById('divisor').value);
+
+            // Validar datos
+            if (isNaN(puntoMax) || isNaN(puntoMin) || isNaN(divisor) || divisor === 0) {
+                alert("Por favor ingresa valores numéricos válidos (el divisor no puede ser 0)");
+                return;
+            }
+
+            // Calcular diferencias
+            const diferencia = puntoMax - puntoMin;
+            const resultadoDividido = diferencia / divisor;
+            let puntoOperacion;
+
+            // Definir punto de operación según tipo
+            if (tipoOp === 'venta') {
+                puntoOperacion = puntoMin - resultadoDividido;
+            } else {
+                puntoOperacion = puntoMax + resultadoDividido;
+            }
+
+            // Mostrar resultados
+            document.getElementById('valorDiferencia').textContent = diferencia.toFixed(4);
+            document.getElementById('valorDividido').textContent = resultadoDividido.toFixed(4);
+            document.getElementById('valorOperacion').textContent = puntoOperacion.toFixed(4);
+            
+            document.getElementById('resultadoDiferencia').style.display = 'block';
+            document.getElementById('resultadoDividido').style.display = 'block';
+            document.getElementById('resultadoOperacion').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
